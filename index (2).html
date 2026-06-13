@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NayePankh Volunteer Registration System</title>
+<style>
+  :root{
+    --bg:#f4f7fb;
+    --text:#1a1a1a;
+    --primary:#1e88e5;
+    --secondary:#fbc02d;
+    --card-bg:#ffffff;
+    --shadow:0 4px 20px rgba(0,0,0,0.08);
+    --danger:#e53935;
+    --success:#43a047;
+  }
+  [data-theme="dark"]{
+    --bg:#121212;
+    --text:#f1f1f1;
+    --card-bg:#1e1e1e;
+    --shadow:0 4px 20px rgba(0,0,0,0.4);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+  body{background:var(--bg);color:var(--text);transition:background .4s,color .4s; min-height:100vh;}
+
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 6%;background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff;box-shadow:var(--shadow);position:sticky;top:0;z-index:100;
+  }
+  header .logo{font-size:1.3rem;font-weight:700;}
+  header nav{display:flex;gap:10px;}
+  header nav button{
+    background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 16px;
+    border-radius:20px;cursor:pointer;font-weight:600;transition:.3s;
+  }
+  header nav button:hover{background:rgba(255,255,255,0.35);}
+  header nav button.active{background:#fff;color:var(--primary);}
+  .theme-toggle{
+    background:none;border:2px solid #fff;color:#fff;border-radius:20px;
+    padding:6px 14px;cursor:pointer;font-weight:600;
+  }
+
+  main{max-width:1000px;margin:0 auto;padding:30px 5% 60px;}
+  .page{animation:fadeIn .6s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  .hidden{display:none !important;}
+
+  /* HERO */
+  .hero{
+    text-align:center;padding:50px 20px;border-radius:20px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff;margin-bottom:30px;animation:fadeIn .8s ease;
+  }
+  .hero h1{font-size:2.2rem;margin-bottom:10px;}
+  .hero p{opacity:.95;max-width:600px;margin:0 auto;}
+
+  /* CARD */
+  .card{
+    background:var(--card-bg);border-radius:16px;box-shadow:var(--shadow);
+    padding:30px;margin-bottom:25px;
+  }
+  .card h2{color:var(--primary);margin-bottom:8px;}
+  .card .subtitle{opacity:.75;margin-bottom:20px;font-size:.95rem;}
+
+  /* FORM */
+  form{display:grid;gap:16px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  label{font-weight:600;font-size:.9rem;display:block;margin-bottom:6px;}
+  input,select,textarea{
+    width:100%;padding:12px 14px;border-radius:10px;border:1px solid #ccc;
+    background:var(--bg);color:var(--text);font-size:1rem;transition:.3s;
+  }
+  input:focus,select:focus,textarea:focus{
+    outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,136,229,.15);
+  }
+  .skills-grid{display:flex;flex-wrap:wrap;gap:10px;}
+  .skill-chip{
+    padding:8px 16px;border-radius:20px;border:2px solid var(--primary);
+    color:var(--primary);cursor:pointer;font-weight:600;font-size:.85rem;
+    transition:.25s;user-select:none;
+  }
+  .skill-chip.selected{background:var(--primary);color:#fff;transform:scale(1.05);}
+
+  .btn{
+    padding:14px 30px;border:none;border-radius:30px;font-weight:700;
+    cursor:pointer;font-size:1rem;transition:.3s;background:var(--primary);color:#fff;
+  }
+  .btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.2);}
+  .btn-secondary{background:var(--secondary);color:#1a1a1a;}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn-outline{background:none;border:2px solid var(--primary);color:var(--primary);}
+
+  /* SUCCESS */
+  .success-box{
+    text-align:center;padding:40px 20px;animation:popIn .5s ease;
+  }
+  @keyframes popIn{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+  .success-box .icon{font-size:4rem;animation:bounce 1.2s ease infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+
+  /* STATS */
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:25px;}
+  .stat-card{
+    background:var(--card-bg);border-radius:14px;padding:24px;text-align:center;
+    box-shadow:var(--shadow);transition:.3s;
+  }
+  .stat-card:hover{transform:translateY(-6px);}
+  .stat-card h3{font-size:2rem;color:var(--secondary);}
+  .stat-card p{margin-top:6px;font-weight:600;opacity:.8;font-size:.85rem;}
+
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  th,td{padding:12px 10px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);}
+  th{color:var(--primary);font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;}
+  tr{transition:.2s;}
+  tr:hover{background:rgba(30,136,229,.06);}
+  .badge{
+    padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;
+  }
+  .badge.pending{background:#fff3cd;color:#856404;}
+  .badge.approved{background:#d4edda;color:#155724;}
+  .badge.rejected{background:#f8d7da;color:#721c24;}
+  [data-theme="dark"] .badge.pending{background:#5a4a1f;color:#ffe9a8;}
+  [data-theme="dark"] .badge.approved{background:#1f4a26;color:#a8ffb8;}
+  [data-theme="dark"] .badge.rejected{background:#4a1f22;color:#ffb3b8;}
+
+  .action-btn{
+    border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.75rem;
+    font-weight:700;margin-right:4px;transition:.2s;
+  }
+  .action-btn.approve{background:var(--success);color:#fff;}
+  .action-btn.reject{background:var(--danger);color:#fff;}
+  .action-btn.delete{background:#9e9e9e;color:#fff;}
+  .action-btn:hover{opacity:.8;}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .toolbar input{max-width:250px;}
+  .filter-buttons{display:flex;gap:8px;flex-wrap:wrap;}
+  .filter-buttons button{
+    padding:8px 16px;border-radius:20px;border:1px solid var(--primary);
+    background:none;color:var(--primary);cursor:pointer;font-weight:600;font-size:.85rem;transition:.2s;
+  }
+  .filter-buttons button.active{background:var(--primary);color:#fff;}
+
+  /* LOGIN */
+  .login-box{max-width:400px;margin:60px auto;}
+  .login-box .icon{text-align:center;font-size:3rem;margin-bottom:10px;}
+
+  /* TOAST */
+  #toast{
+    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--success);color:#fff;padding:14px 26px;border-radius:30px;
+    box-shadow:var(--shadow);font-weight:600;transition:.4s;z-index:999;opacity:0;
+  }
+  #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+  .empty-state{text-align:center;padding:50px 20px;opacity:.6;}
+  .empty-state .icon{font-size:3rem;margin-bottom:10px;}
+
+  footer{text-align:center;padding:20px;opacity:.6;font-size:.85rem;}
+
+  @media(max-width:700px){
+    .form-row{grid-template-columns:1fr;}
+    .stats-grid{grid-template-columns:1fr 1fr;}
+    header{flex-direction:column;gap:10px;padding:14px 4%;}
+    header nav{flex-wrap:wrap;justify-content:center;}
+    table{display:block;overflow-x:auto;white-space:nowrap;}
+  }
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="logo">🕊️ NayePankh Volunteer Hub</div>
+  <nav>
+    <button id="navRegister" class="active">Register</button>
+    <button id="navAdmin">Admin</button>
+  </nav>
+  <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+</header>
+
+<main>
+
+  <!-- ============= REGISTER PAGE ============= -->
+  <div class="page" id="registerPage">
+    <div class="hero">
+      <h1>Become a NayePankh Volunteer 🌱</h1>
+      <p>Join 500+ student volunteers making a real difference. Fill the form below to register — it takes less than a minute!</p>
+    </div>
+
+    <div class="card">
+      <h2>Volunteer Registration Form</h2>
+      <p class="subtitle">All fields marked * are required.</p>
+
+      <form id="volunteerForm">
+        <div class="form-row">
+          <div>
+            <label>Full Name *</label>
+            <input type="text" id="fname" placeholder="e.g. Aarav Sharma" required>
+          </div>
+          <div>
+            <label>Email *</label>
+            <input type="email" id="email" placeholder="e.g. aarav@email.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Phone Number *</label>
+            <input type="tel" id="phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+          </div>
+          <div>
+            <label>City *</label>
+            <input type="text" id="city" placeholder="e.g. Kanpur" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Age *</label>
+            <input type="number" id="age" min="14" max="70" placeholder="e.g. 20" required>
+          </div>
+          <div>
+            <label>Availability *</label>
+            <select id="availability" required>
+              <option value="">Select availability</option>
+              <option>Weekdays</option>
+              <option>Weekends</option>
+              <option>Both</option>
+              <option>Flexible / On-call</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label>Areas of Interest (select all that apply) *</label>
+          <div class="skills-grid" id="skillsGrid">
+            <div class="skill-chip" data-skill="Food Distribution">🍛 Food Distribution</div>
+            <div class="skill-chip" data-skill="Education">📚 Education</div>
+            <div class="skill-chip" data-skill="Healthcare">🏥 Healthcare</div>
+            <div class="skill-chip" data-skill="Hygiene Awareness">💗 Hygiene Awareness</div>
+            <div class="skill-chip" data-skill="Event Management">🎉 Event Management</div>
+            <div class="skill-chip" data-skill="Social Media">📱 Social Media</div>
+            <div class="skill-chip" data-skill="Fundraising">💰 Fundraising</div>
+            <div class="skill-chip" data-skill="Teaching">🧑‍🏫 Teaching</div>
+          </div>
+        </div>
+
+        <div>
+          <label>Why do you want to volunteer with us?</label>
+          <textarea id="message" rows="3" placeholder="Tell us a little about your motivation..."></textarea>
+        </div>
+
+        <button type="submit" class="btn">🚀 Submit Registration</button>
+      </form>
+
+      <div class="success-box hidden" id="successBox">
+        <div class="icon">🎉</div>
+        <h2>Thank You for Registering!</h2>
+        <p style="margin-top:10px;opacity:.85;">Your application has been received. Our team will review it and get back to you soon.</p>
+        <p style="margin-top:6px;font-weight:700;color:var(--primary);" id="refId"></p>
+        <button class="btn" style="margin-top:20px;" id="registerAnother">Register Another Volunteer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============= ADMIN LOGIN PAGE ============= -->
+  <div class="page hidden" id="loginPage">
+    <div class="card login-box">
+      <div class="icon">🔐</div>
+      <h2 style="text-align:center;">Admin Login</h2>
+      <p class="subtitle" style="text-align:center;">Login to manage volunteer applications.</p>
+      <form id="loginForm">
+        <div style="margin-bottom:14px;">
+          <label>Username</label>
+          <input type="text" id="adminUser" placeholder="admin" required>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label>Password</label>
+          <input type="password" id="adminPass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn" style="width:100%;">Login</button>
+      </form>
+      <p style="text-align:center;margin-top:14px;font-size:.8rem;opacity:.6;">Demo credentials: <b>admin</b> / <b>nayepankh123</b></p>
+    </div>
+  </div>
+
+  <!-- ============= ADMIN DASHBOARD PAGE ============= -->
+  <div class="page hidden" id="dashboardPage">
+    <div class="hero">
+      <h1>Admin Dashboard 📊</h1>
+      <p>Manage volunteer applications, track approvals, and generate reports.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><h3 id="statTotal">0</h3><p>Total Applications</p></div>
+      <div class="stat-card"><h3 id="statPending">0</h3><p>Pending</p></div>
+      <div class="stat-card"><h3 id="statApproved">0</h3><p>Approved</p></div>
+      <div class="stat-card"><h3 id="statRejected">0</h3><p>Rejected</p></div>
+    </div>
+
+    <div class="card">
+      <h2>Volunteer Applications</h2>
+      <p class="subtitle">Review, approve, reject, or delete applications below.</p>
+
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="🔍 Search by name, email, city...">
+        <div class="filter-buttons" id="filterButtons">
+          <button data-filter="all" class="active">All</button>
+          <button data-filter="Pending">Pending</button>
+          <button data-filter="Approved">Approved</button>
+          <button data-filter="Rejected">Rejected</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" id="exportBtn">⬇️ Export CSV Report</button>
+          <button class="btn btn-danger" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+
+      <div id="tableWrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Contact</th><th>City</th><th>Age</th>
+              <th>Availability</th><th>Interests</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="volunteerTableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state hidden" id="emptyState">
+        <div class="icon">📭</div>
+        <p>No volunteer applications found.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>© 2026 NayePankh Foundation — Volunteer Registration System | Data stored locally in browser</footer>
+
+<div id="toast"></div>
+
+<script>
+/* ================= STATE & STORAGE ================= */
+const STORAGE_KEY = 'np_volunteers';
+const AUTH_KEY = 'np_admin_auth';
+
+function getVolunteers(){
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+}
+function saveVolunteers(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+function isLoggedIn(){
+  return sessionStorage.getItem(AUTH_KEY) === 'true';
+}
+
+/* ================= TOAST ================= */
+function showToast(msg, color){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.background = color || 'var(--success)';
+  toast.classList.add('show');
+  setTimeout(()=> toast.classList.remove('show'), 2500);
+}
+
+/* ================= THEME TOGGLE ================= */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', ()=>{
+  const body = document.body;
+  const isDark = body.getAttribute('data-theme') === 'dark';
+  body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  themeToggle.textContent = isDark ? '🌙 Dark' : '☀️ Light';
+});
+
+/* ================= NAVIGATION ================= */
+const navRegister = document.getElementById('navRegister');
+const navAdmin = document.getElementById('navAdmin');
+const registerPage = document.getElementById('registerPage');
+const loginPage = document.getElementById('loginPage');
+const dashboardPage = document.getElementById('dashboardPage');
+
+function showPage(page){
+  [registerPage, loginPage, dashboardPage].forEach(p=>p.classList.add('hidden'));
+  page.classList.remove('hidden');
+}
+
+navRegister.addEventListener('click', ()=>{
+  navRegister.classList.add('active');
+  navAdmin.classList.remove('active');
+  showPage(registerPage);
+});
+
+navAdmin.addEventListener('click', ()=>{
+  navAdmin.classList.add('active');
+  navRegister.classList.remove('active');
+  if(isLoggedIn()){
+    showPage(dashboardPage);
+    renderDashboard();
+  } else {
+    showPage(loginPage);
+  }
+});
+
+/* ================= SKILL CHIPS ================= */
+const skillsGrid = document.getElementById('skillsGrid');
+skillsGrid.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('skill-chip')){
+    e.target.classList.toggle('selected');
+  }
+});
+
+/* ================= REGISTRATION FORM ================= */
+const volunteerForm = document.getElementById('volunteerForm');
+const successBox = document.getElementById('successBox');
+
+volunteerForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+
+  const selectedSkills = [...document.querySelectorAll('.skill-chip.selected')].map(el=>el.dataset.skill);
+  if(selectedSkills.length === 0){
+    showToast('⚠️ Please select at least one area of interest', 'var(--danger)');
+    return;
+  }
+
+  const volunteer = {
+    id: 'NP' + Date.now().toString().slice(-8),
+    name: document.getElementById('fname').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    age: document.getElementById('age').value,
+    availability: document.getElementById('availability').value,
+    interests: selectedSkills,
+    message: document.getElementById('message').value.trim(),
+    status: 'Pending',
+    date: new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'})
+  };
+
+  const list = getVolunteers();
+  list.unshift(volunteer);
+  saveVolunteers(list);
+
+  document.getElementById('refId').textContent = 'Reference ID: ' + volunteer.id;
+  volunteerForm.classList.add('hidden');
+  successBox.classList.remove('hidden');
+});
+
+document.getElementById('registerAnother').addEventListener('click', ()=>{
+  volunteerForm.reset();
+  document.querySelectorAll('.skill-chip.selected').forEach(el=>el.classList.remove('selected'));
+  successBox.classList.add('hidden');
+  volunteerForm.classList.remove('hidden');
+});
+
+/* ================= ADMIN LOGIN ================= */
+const loginForm = document.getElementById('loginForm');
+loginForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const user = document.getElementById('adminUser').value.trim();
+  const pass = document.getElementById('adminPass').value.trim();
+
+  if(user === 'admin' && pass === 'nayepankh123'){
+    sessionStorage.setItem(AUTH_KEY, 'true');
+    showToast('✅ Login successful!');
+    showPage(dashboardPage);
+    renderDashboard();
+    loginForm.reset();
+  } else {
+    showToast('❌ Invalid credentials', 'var(--danger)');
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  sessionStorage.removeItem(AUTH_KEY);
+  navRegister.click();
+  showToast('👋 Logged out');
+});
+
+/* ================= DASHBOARD ================= */
+let currentFilter = 'all';
+let currentSearch = '';
+
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  currentSearch = e.target.value.toLowerCase();
+  renderDashboard();
+});
+
+document.getElementById('filterButtons').addEventListener('click', (e)=>{
+  if(e.target.tagName === 'BUTTON'){
+    document.querySelectorAll('#filterButtons button').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentFilter = e.target.dataset.filter;
+    renderDashboard();
+  }
+});
+
+function renderDashboard(){
+  const all = getVolunteers();
+
+  // Stats
+  document.getElementById('statTotal').textContent = all.length;
+  document.getElementById('statPending').textContent = all.filter(v=>v.status==='Pending').length;
+  document.getElementById('statApproved').textContent = all.filter(v=>v.status==='Approved').length;
+  document.getElementById('statRejected').textContent = all.filter(v=>v.status==='Rejected').length;
+
+  // Filter + search
+  let filtered = all;
+  if(currentFilter !== 'all'){
+    filtered = filtered.filter(v=>v.status === currentFilter);
+  }
+  if(currentSearch){
+    filtered = filtered.filter(v=>
+      v.name.toLowerCase().includes(currentSearch) ||
+      v.email.toLowerCase().includes(currentSearch) ||
+      v.city.toLowerCase().includes(currentSearch)
+    );
+  }
+
+  const tbody = document.getElementById('volunteerTableBody');
+  const emptyState = document.getElementById('emptyState');
+  const tableWrapper = document.getElementById('tableWrapper');
+
+  if(filtered.length === 0){
+    tableWrapper.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  }
+  tableWrapper.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+
+  tbody.innerHTML = filtered.map(v=>`
+    <tr>
+      <td><b>${escapeHtml(v.name)}</b><br><small style="opacity:.6;">${v.id} · ${v.date}</small></td>
+      <td>${escapeHtml(v.email)}<br><small style="opacity:.6;">${escapeHtml(v.phone)}</small></td>
+      <td>${escapeHtml(v.city)}</td>
+      <td>${escapeHtml(String(v.age))}</td>
+      <td>${escapeHtml(v.availability)}</td>
+      <td>${v.interests.map(i=>escapeHtml(i)).join(', ')}</td>
+      <td><span class="badge ${v.status.toLowerCase()}">${v.status}</span></td>
+      <td>
+        <button class="action-btn approve" onclick="updateStatus('${v.id}','Approved')">✓</button>
+        <button class="action-btn reject" onclick="updateStatus('${v.id}','Rejected')">✕</button>
+        <button class="action-btn delete" onclick="deleteVolunteer('${v.id}')">🗑</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function updateStatus(id, status){
+  const list = getVolunteers();
+  const idx = list.findIndex(v=>v.id === id);
+  if(idx !== -1){
+    list[idx].status = status;
+    saveVolunteers(list);
+    renderDashboard();
+    showToast(`Status updated to ${status}`, status==='Approved' ? 'var(--success)' : 'var(--danger)');
+  }
+}
+
+function deleteVolunteer(id){
+  if(!confirm('Delete this application permanently?')) return;
+  let list = getVolunteers();
+  list = list.filter(v=>v.id !== id);
+  saveVolunteers(list);
+  renderDashboard();
+  showToast('🗑 Application deleted', 'var(--danger)');
+}
+
+/* ================= CSV EXPORT (Report Generation) ================= */
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const all = getVolunteers();
+  if(all.length === 0){
+    showToast('No data to export', 'var(--danger)');
+    return;
+  }
+  const headers = ['ID','Name','Email','Phone','City','Age','Availability','Interests','Status','Date'];
+  const rows = all.map(v=>[
+    v.id, v.name, v.email, v.phone, v.city, v.age, v.availability,
+    v.interests.join('; '), v.status, v.date
+  ]);
+  let csv = headers.join(',') + '\n';
+  rows.forEach(r=>{
+    csv += r.map(field => `"${String(field).replace(/"/g,'""')}"`).join(',') + '\n';
+  });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `NayePankh_Volunteer_Report_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📊 Report downloaded successfully!');
+});
+
+/* ================= INIT: DEMO DATA (only if empty) ================= */
+if(getVolunteers().length === 0){
+  saveVolunteers([
+    {id:'NP10000001', name:'Aarav Sharma', email:'aarav@email.com', phone:'9876543210', city:'Kanpur', age:'21', availability:'Weekends', interests:['Education','Teaching'], message:'I love teaching kids.', status:'Approved', date:'01 Jun 2026'},
+    {id:'NP10000002', name:'Priya Verma', email:'priya@email.com', phone:'9123456780', city:'Lucknow', age:'19', availability:'Both', interests:['Food Distribution','Hygiene Awareness'], message:'Want to give back to society.', status:'Pending', date:'05 Jun 2026'},
+    {id:'NP10000003', name:'Rohan Gupta', email:'rohan@email.com', phone:'9988776655', city:'Delhi', age:'24', availability:'Flexible / On-call', interests:['Social Media','Fundraising'], message:'Experienced in digital marketing.', status:'Rejected', date:'08 Jun 2026'}
+  ]);
+}
+</script>
+</body>
+</html>
